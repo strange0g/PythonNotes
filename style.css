@@ -12,7 +12,6 @@
     --console-border: #444;
     --shadow-color: rgba(0, 0, 0, 0.4);
     --tooltip-bg: #2d333b;
-    --active-toc-bg: #1f2b3c;
     --font-primary: 'Poppins', sans-serif;
     --font-code: 'Fira Code', monospace;
 }
@@ -28,6 +27,19 @@ body {
 }
 .hidden { display: none; }
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+/* --- Scroll Progress Bar --- */
+#progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background-color: var(--accent-color);
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.1s linear;
+}
+
 
 /* --- Homepage Styles --- */
 #homepage .header { text-align: center; margin-bottom: 4rem; }
@@ -49,68 +61,12 @@ body {
 .note-card.placeholder .card-icon { color: var(--secondary-text); }
 .note-card.placeholder:hover { transform: none; box-shadow: none; border-color: var(--border-color); }
 
+
 /* --- Notes Page Styles --- */
-#notes-page-content { display: flex; gap: 3rem; }
-#toc { position: sticky; top: 2rem; width: 280px; flex-shrink: 0; align-self: flex-start; }
-#toc h3 { 
-    font-size: 1.3rem; 
-    font-weight: 600;
-    margin-bottom: 1rem; 
-    padding-bottom: 0.75rem; 
-    border-bottom: 1px solid var(--border-color); 
-    color: var(--primary-text); 
-    display: flex; 
-    align-items: center; 
-}
-#toc h3 .fas { 
-    margin-right: 12px; 
-    color: var(--primary-text); 
-}
-
-/* --- TOC Styling to match the screenshot --- */
-#toc nav ul { 
-    list-style: none; 
-    position: relative; 
-}
-#toc nav ul::before { /* The main vertical line */
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 10px;
-    bottom: 10px;
-    width: 1px;
-    background-color: var(--border-color);
-}
-#toc nav li a {
-    display: block;
-    padding: 0.6rem 0.6rem 0.6rem 24px;
-    text-decoration: none;
-    color: var(--secondary-text);
-    border-radius: 4px;
-    margin: 0.2rem 0;
-    position: relative;
-    border-left: 2px solid transparent; /* Placeholder for the active state */
-    transition: color 0.2s ease, background-color 0.2s ease, border-left-color 0.2s ease;
-}
-#toc nav li a.sub-item {
-    font-size: 0.9rem;
-    padding-left: 38px; /* Indent sub-items more */
-    color: #a0a8b1;
-}
-#toc nav li a:hover {
-    color: var(--primary-text);
-    background-color: var(--card-bg);
-}
-#toc nav li a.active {
-    color: var(--accent-hover);
-    font-weight: 500;
-    background-color: var(--active-toc-bg);
-    border-left-color: var(--accent-color);
-}
-
+/* (TOC was here) */
 
 /* --- Main Content --- */
-#main-content { flex-grow: 1; min-width: 0; }
+#main-content { min-width: 0; margin: 0 auto; max-width: 800px; }
 #main-content > section { margin-bottom: 2rem; padding-top: 2rem; }
 #main-content h1 { font-size: 3rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color); }
 #main-content h2 { font-size: 2.2rem; margin-top: 1rem; margin-bottom: 1.5rem; color: var(--accent-color); }
@@ -120,12 +76,16 @@ body {
 #main-content ul li::before {
     content: "\25A0"; /* Square bullet */ color: var(--accent-color); font-weight: bold; display: inline-block; width: 1.5em; margin-left: -1.5em;
 }
-#main-content .summary-list li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; }
+#main-content .summary-list li::before { 
+    content: "\f00c"; /* check icon */
+    font-family: "Font Awesome 6 Free"; 
+    font-weight: 900;
+}
 #main-content a { color: var(--accent-color); text-decoration: none; border-bottom: 1px dashed var(--accent-color); transition: color 0.2s ease; }
 #main-content a:hover { color: var(--accent-hover); }
 
 /* Code Blocks & Tooltips */
-#main-content pre { position: relative; margin: 2rem 0; }
+#main-content pre { position: relative; margin: 2rem 0; overflow-x: auto; }
 #main-content pre code.language-bash { background-color: var(--console-bg); border: 1px solid var(--console-border); color: #eee; }
 #main-content code { font-family: var(--font-code); }
 #main-content p > code, #main-content li > code { background-color: var(--card-bg); padding: 0.2em 0.5em; border-radius: 4px; font-size: 0.9em; border: 1px solid var(--border-color); }
@@ -159,10 +119,6 @@ body {
 #scroll-to-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
 
 /* Responsive Design */
-@media (max-width: 992px) {
-    #notes-page-content { flex-direction: column; }
-    #toc { position: static; width: 100%; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); }
-}
 @media (max-width: 768px) {
     body { font-size: 16px; }
     #homepage .header h1, #main-content h1 { font-size: 2.5rem; }

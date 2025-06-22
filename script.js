@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     // --- Initialize External Libraries ---
     AOS.init({ duration: 600, once: true, easing: 'ease-in-out' });
-    hljs.highlightAll();
 
-    // --- Page Navigation Logic ---
+    // --- Page Element Selectors ---
     const homepage = document.getElementById('homepage');
     const notesPage = document.getElementById('notes-page');
-    const card1 = document.getElementById('card-1');
-    const backToHomeBtn = document.getElementById('back-to-home-btn');
+    const mainContent = document.getElementById('main-content');
+    const progressBar = document.getElementById('progress-bar');
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
 
+    // --- Page Navigation and Content Loading Logic ---
     function showHomepage() {
         homepage.classList.remove('hidden');
         notesPage.classList.add('hidden');
@@ -20,96 +21,119 @@ document.addEventListener('DOMContentLoaded', function() {
     function showNotesPage() {
         homepage.classList.add('hidden');
         notesPage.classList.remove('hidden');
-        window.location.hash = 'notes';
-        document.title = `Note: ${document.getElementById('main-title').textContent}`;
         window.scrollTo(0, 0);
     }
 
-    if (card1) card1.addEventListener('click', (e) => { e.preventDefault(); showNotesPage(); });
-    if (backToHomeBtn) backToHomeBtn.addEventListener('click', (e) => { e.preventDefault(); showHomepage(); });
-    if (window.location.hash === '#notes') showNotesPage();
-    else showHomepage();
+    async function loadAndShowNote(noteFile) {
+        showNotesPage();
+        mainContent.innerHTML = '<h2><i class="fas fa-spinner fa-spin"></i> Loading Note...</h2>'; // Loading state
 
-    // --- Scroll to Top Button ---
-    const scrollToTopBtn = document.getElementById('scroll-to-top');
-    window.addEventListener('scroll', () => {
-        scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+        try {
+            const response = await fetch(noteFile);
+            if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+            
+            const noteHtml = await response.text();
+            mainContent.innerHTML = noteHtml;
+
+            const noteTitle = mainContent.querySelector('h1').textContent;
+            document.title = `Note: ${noteTitle}`;
+            
+            initializeNoteContent();
+
+        } catch (error) {
+            mainContent.innerHTML = `<h2>Error Loading Note</h2><p>Could not fetch the note content. Please try again later.</p><p><em>${error}</em></p>`;
+            console.error('Failed to load note:', error);
+        }
+    }
+
+    function initializeNoteContent() {
+        // Re-initialize AOS for newly added content
+        AOS.init({ duration: 600, once: true, easing: 'ease-in-out' });
+        // Re-run syntax highlighting
+        hljs.highlightAll();
+
+        // Re-bind back button as it's part of the loaded content
+        const backToHomeBtn = document.getElementById('back-to-home-btn');
+        if (backToHomeBtn) {
+            backToHomeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showHomepage();
+            });
+        }
+        
+        // Add "Copy" button to all new code blocks
+        mainContent.querySelectorAll('pre').forEach(block => {
+            // Prevent adding a button if one already exists
+            if (block.querySelector('.copy-code-btn')) return;
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-code-btn';
+            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            copyBtn.setAttribute('title', 'Copy code');
+            block.appendChild(copyBtn);
+
+            copyBtn.addEventListener('click', () => {
+                const code = block.querySelector('code').innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    copyBtn.setAttribute('title', 'Copied!');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                        copyBtn.setAttribute('title', 'Copy code');
+                    }, 2000);
+                });
+            });
+        });
+    }
+
+    // --- Event Listeners for Note Cards ---
+    document.querySelectorAll('.note-link').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            const noteFile = card.dataset.noteFile;
+            window.location.hash = `notes/${noteFile.split('/')[1]}`; // Set a clean hash
+            loadAndShowNote(noteFile);
+        });
     });
+
+    // --- Router: Handle initial page load based on URL hash ---
+    function handleRouting() {
+        const hash = window.location.hash;
+        if (hash.startsWith('#notes/')) {
+            const noteFileName = hash.substring(7); // Remove '#notes/'
+            loadAndShowNote(`notes/${noteFileName}`);
+        } else {
+            showHomepage();
+        }
+    }
+    
+    // Initial routing
+    handleRouting();
+
+    // Listen for hash changes to allow browser back/forward buttons to work
+    window.addEventListener('hashchange', handleRouting);
+
+
+    // --- UI Widgets ---
+
+    // Scroll to Top Button
     scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    // --- Code Block "Copy" Button ---
-    document.querySelectorAll('#main-content pre').forEach(block => {
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-code-btn';
-        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-        copyBtn.setAttribute('title', 'Copy code');
-        block.appendChild(copyBtn);
-
-        copyBtn.addEventListener('click', () => {
-            const code = block.querySelector('code').innerText;
-            navigator.clipboard.writeText(code).then(() => {
-                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                copyBtn.setAttribute('title', 'Copied!');
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                    copyBtn.setAttribute('title', 'Copy code');
-                }, 2000);
-            });
-        });
-    });
-
-    // --- Hierarchical TOC Logic ---
-    const tocList = document.getElementById('toc-list');
-    const mainContent = document.getElementById('main-content');
-
-    if (tocList && mainContent) {
-        const headings = Array.from(mainContent.querySelectorAll('h2[id], h3[id]'));
-        const tocLinks = [];
-
-        // Clear existing TOC and rebuild it
-        tocList.innerHTML = '';
-        headings.forEach(heading => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `#${heading.id}`;
-            a.textContent = heading.textContent;
-            a.dataset.targetId = heading.id;
-            
-            if (heading.tagName === 'H3') {
-                a.classList.add('sub-item');
-            }
-
-            li.appendChild(a);
-            tocList.appendChild(li);
-            tocLinks.push(a);
-        });
+    // Scroll Progress Bar and Scroll-to-Top visibility
+    window.addEventListener('scroll', () => {
+        const isNotesPageVisible = !notesPage.classList.contains('hidden');
         
-        if (headings.length === 0) return;
+        // Handle Scroll-to-Top button visibility
+        scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
 
-        const headingStates = new Map();
-
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                headingStates.set(entry.target, entry.isIntersecting);
-            });
-
-            let activeHeading = null;
-            
-            headings.forEach(heading => {
-                if (headingStates.get(heading)) {
-                    activeHeading = heading;
-                }
-            });
-
-            tocLinks.forEach(link => {
-                link.classList.toggle('active', activeHeading && link.dataset.targetId === activeHeading.id);
-            });
-
-        }, { 
-            rootMargin: '0px 0px -65% 0px',
-            threshold: 0 
-        });
-
-        headings.forEach(heading => observer.observe(heading));
-    }
+        // Handle Progress Bar
+        if (isNotesPageVisible) {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = `${scrolled}%`;
+        } else {
+            progressBar.style.width = '0%';
+        }
+    });
 });
