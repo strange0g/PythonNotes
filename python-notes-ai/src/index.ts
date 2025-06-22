@@ -1,117 +1,132 @@
 // src/index.ts
-
-// Import the official Google AI SDK
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-/**
- * Define the environment variables that will be available to the worker.
- * Cloudflare will automatically bind the secret you created to this interface.
- */
 export interface Env {
   GEMINI_API_KEY: string;
 }
 
+// Define the shape of the incoming request body
+interface ChatRequestBody {
+  query: string;
+  notesContext: string;
+  fileContext?: string | null;
+}
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*', // IMPORTANT: In production, change this to your website's domain
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+// =================================================================
+// THE ADVANCED SYSTEM PROMPT - THE AI's "BRAIN"
+// =================================================================
+const SYSTEM_PROMPT = `
+You are PyPro-AI, an expert Python programming tutor and Socratic partner. You are an assistant for a website called "Advanced Python Notes," created by a developer named Raied. Your primary goal is to help students learn and understand Python concepts, not to do their work for them. You must be patient, encouraging, and celebrate small victories.
+
+*** YOUR CORE DIRECTIVES - YOU MUST FOLLOW THESE RULES AT ALL TIMES ***
+
+1.  **ABSOLUTE RULE: DO NOT PROVIDE COMPLETE CODE SOLUTIONS.** Never write out a full, runnable script or function that directly solves the user's problem. Your purpose is to teach, not to give answers.
+
+2.  **GUIDE, DON'T GIVE:** Instead of giving the full code, guide the user to the solution. Provide explanations, suggest which functions or methods to use, and offer small, illustrative snippets. A snippet should be 1-3 lines and demonstrate a single concept, not solve the whole problem.
+
+3.  **BE A SOCRATIC PARTNER ("Rubber Ducking"):** When a user is stuck, ask probing questions to help them think through the problem.
+    *   "What have you tried so far?"
+    *   "What do you think the next logical step is?"
+    *   "What does the error message tell you?"
+    *   "Can you break the problem down into smaller pieces?"
+
+*** HOW TO HANDLE SPECIFIC REQUESTS ***
+
+*   **IF THE USER ASKS FOR A FULL SOLUTION ("Write me a script that..."):**
+    1.  Politely decline. Say something like, "My goal is to help you learn how to build that yourself! Let's break it down. What do you think the first step would be?"
+    2.  Guide them through the process step-by-step, prompting them for each part.
+
+*   **IF THE USER PROVIDES CODE WITH AN ERROR:**
+    1.  Acknowledge the user's code.
+    2.  Identify the error without being critical.
+    3.  Explain the *conceptual reason* for the error (e.g., "It looks like you're trying to add a string to an integer, which Python doesn't allow directly. We need to convert the string to a number first.").
+    4.  Provide **ONLY the corrected line or snippet**, not the entire code block.
+    5.  Explain *why* the correction works.
+    *   Example:
+        *   User code: \`age = input("Age: "); print("Next year you will be " + (age + 1))\`
+        *   Your response: "Great start! The error here is that \`input()\` gives us a string, and we can't add the number 1 to a string. We need to cast the 'age' variable to an integer first. The corrected line would be: \`age = int(input("Age: "))\`. This converts the input into a number so we can do math with it."
+
+*   **IF THE USER ASKS A CONCEPTUAL QUESTION ("What is a dictionary?"):**
+    1.  Provide a clear, concise explanation.
+    2.  Give a very simple, self-contained example (e.g., \`person = {'name': 'Alice', 'age': 30}\`).
+    3.  Crucially, **connect it back to the provided course notes**. For example: "This is covered in detail in the 'Data Structures' notes. The notes explain how to add and remove items from a dictionary."
+
+*** CONTEXT FOR YOUR RESPONSES ***
+You have been provided with the following information to use in your answers:
+
+1.  **Raied's Course Notes:** A comprehensive set of notes on Python. Refer to these as the primary source of truth. You can quote small parts or reference section titles.
+    <COURSE_NOTES>
+    {{NOTES_CONTEXT}}
+    </COURSE_NOTES>
+
+2.  **User's Uploaded File:** The user may have attached a file with their code. If so, its content is here. Base your analysis and debugging help on this code.
+    <USER_FILE_CONTENT>
+    {{FILE_CONTEXT}}
+    </USER_FILE_CONTENT>
+`;
+
 export default {
-  /**
-   * The main fetch handler for the worker. This is the entry point for all requests.
-   * @param request - The incoming HTTP request.
-   * @param env - The environment variables, including secrets.
-   * @param ctx - The execution context.
-   * @returns A Response object.
-   */
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    
-    // --- CORS Handling ---
-    // The browser will send an 'OPTIONS' request first to check if it's allowed to make a POST request.
-    // This is called a "preflight" request. We need to handle it.
     if (request.method === 'OPTIONS') {
       return handleOptions(request);
     }
-
-    // We only want to handle POST requests for our chat API.
     if (request.method !== 'POST') {
       return new Response('Method Not Allowed. Please use POST.', { status: 405 });
     }
 
     try {
-      // --- Request Processing ---
-      // Parse the JSON body from the incoming request. We expect a { query: "..." } format.
-      const { query } = await request.json<{ query: string }>();
+      const { query, notesContext, fileContext } = await request.json<ChatRequestBody>();
 
-      // Basic validation: ensure the query exists.
       if (!query) {
         return new Response(JSON.stringify({ error: 'Query is a required field.' }), { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
       }
 
-      // --- Gemini AI Logic ---
-      // 1. Initialize the GoogleAI client with the secret API key.
       const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-      
-      // 2. Get the specific model we want to use.
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); // gemini-pro is better for complex instructions
 
-      // 3. Create a prompt. For now, it's a simple instruction.
-      // In Phase 3, this prompt will be much more complex and include custom context.
-      const prompt = `"${query}"`;
+      // 1. Assemble the final prompt by injecting context
+      let finalPrompt = SYSTEM_PROMPT.replace('{{NOTES_CONTEXT}}', notesContext || 'No notes were provided.');
+      finalPrompt = finalPrompt.replace('{{FILE_CONTEXT}}', fileContext || 'No file was uploaded.');
       
-      // 4. Call the Gemini API to generate content.
-      const result = await model.generateContent(prompt);
+      // 2. Add the user's actual query
+      const fullConversation = `${finalPrompt}\n\n*** CURRENT CONVERSATION ***\n\nUSER: ${query}\n\nPyPro-AI:`;
+
+      const result = await model.generateContent(fullConversation);
       const geminiResponse = result.response;
       const responseText = geminiResponse.text();
       
-      // 5. Format the successful response payload.
       const responsePayload = { answer: responseText };
 
-      // --- Send Response ---
-      // Return the AI's answer to the frontend.
       return new Response(JSON.stringify(responsePayload), {
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders, // Important: Include CORS headers in the actual response too
-        },
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
 
     } catch (error) {
-      // --- Error Handling ---
       console.error("An error occurred:", error);
       const errorPayload = { error: 'An internal server error occurred. Please try again later.' };
       return new Response(JSON.stringify(errorPayload), { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
   },
 };
 
-// --- CORS Helper Functions ---
-// Define the headers that allow cross-origin requests.
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // For development. In production, change this to your website's domain.
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
-
-/**
- * Handles the CORS preflight request.
- * @param request - The incoming OPTIONS request.
- * @returns A Response object with the appropriate CORS headers.
- */
 function handleOptions(request: Request) {
-  // Check if the request includes the necessary CORS headers.
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
     request.headers.get('Access-Control-Request-Headers') !== null
   ) {
-    // This is a valid preflight request. Respond with our CORS headers.
     return new Response(null, { headers: corsHeaders });
   } else {
-    // This is not a valid preflight request.
-    return new Response(null, {
-      headers: { Allow: 'POST, OPTIONS' },
-    });
+    return new Response(null, { headers: { Allow: 'POST, OPTIONS' } });
   }
 }

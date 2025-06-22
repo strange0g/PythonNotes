@@ -1,0 +1,62 @@
+[
+  {
+    "file": "notes/01-functions-variables.html",
+    "title": "01. Functions, Variables",
+    "description": "Exploring the fundamental building blocks of Python: functions, variables, data types, and code structure.",
+    "available": true
+  },
+  {
+    "file": null,
+    "title": "02. Conditionals",
+    "description": "Mastering logic and control flow with if, elif, and else statements.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "03. Loops",
+    "description": "Automating repetitive tasks efficiently using for and while loops.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "04. Exceptions",
+    "description": "Handling errors gracefully with try, except, and finally blocks.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "05. Libraries",
+    "description": "Leveraging the power of Python's ecosystem by importing and using external libraries.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "06. Unit Tests",
+    "description": "Ensuring code quality and correctness with automated tests.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "07. File I/O",
+    "description": "Reading from and writing to files to persist data and interact with the file system.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "08. Regular Expressions",
+    "description": "Finding and manipulating text with powerful pattern-matching techniques.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "09. Object-Oriented Programming",
+    "description": "Understanding classes, objects, and inheritance to write modular code.",
+    "available": false
+  },
+  {
+    "file": null,
+    "title": "10. Et Cetera",
+    "description": "Exploring additional advanced topics and best practices in Python.",
+    "available": false
+  }
+]
