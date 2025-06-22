@@ -61,150 +61,362 @@
     
                 <section id="creating-code-with-python" data-aos="fade-up">
                     <h2>Creating Code with Python</h2>
-                    <p>VS Code is a text editor. In addition to editing text, you can visually browse files and run text-based commands at a terminal. In the terminal, you can execute <code>code hello.py</code> to start coding.</p>
-                    <p>In the text editor, you can type <code>print("hello, world")</code>. This is a famous canonical program that nearly all coders write during their learning process. To run this program, move to the terminal window and type <code>python hello.py</code>.</p>
-                    <p>Recall that computers only understand zeros and ones. When you run <code>python hello.py</code>, Python interprets your text and translates it for the computer. The result is <code>hello, world</code> printed to the screen. Congrats! You just created your first program.</p>
+                    <ul>
+                        <li>VS Code is a text editor. In addition to editing text, you can visually browse files and run text-based commands at a terminal.</li>
+                        <li>In the terminal, you can execute <code>code hello.py</code> to start coding.</li>
+                        <li>In the text editor above, you can type <code>print("hello, world")</code>. This is a famous canonical program that nearly all coders write during their learning process.</li>
+                        <li>In the terminal window, you can execute commands. To run this program, you are going to need to move your cursor to the bottom of the screen, clicking in the terminal window. You can now type a second command in the terminal window. Next to the dollar sign, type <code>python hello.py</code> and press the enter key on your keyboard.</li>
+                        <li>Recall that computers really only understand zeros and ones. Therefore, when you run <code>python hello.py</code>, Python will interpret the text that you created in <code>hello.py</code> and translate it into the zeros and ones that the computer can understand.</li>
+                        <li>The result of running the <code>python hello.py</code> program is <code>hello, world</code>.</li>
+                        <li>Congrats! You just created your first program.</li>
+                    </ul>
                 </section>
                 
                 <hr class="section-divider">
 
                 <section id="functions" data-aos="fade-up">
                     <h2>Functions</h2>
-                    <p>Functions are pre-defined actions or verbs. In <code>hello.py</code>, the <code>print</code> function knows how to display text in the terminal. Functions take arguments—pieces of data to work with. In <code>print("hello, world")</code>, the string <code>"hello, world"</code> is the argument.</p>
+                     <ul>
+                        <li>Functions are verbs or actions that the computer or computer language will already know how to perform.</li>
+                        <li>In your <code>hello.py</code> program, the <code>print</code> function knows how to print to the terminal window.</li>
+                        <li>The <code>print</code> function takes <span class="tooltip" data-tooltip="Data passed into a function for it to process.">arguments</span>. In this case, "hello, world" are the arguments that the <code>print</code> function takes.</li>
+                    </ul>
                 </section>
 
                 <hr class="section-divider">
 
                 <section id="bugs" data-aos="fade-up">
                     <h2>Bugs</h2>
-                    <p>Bugs are mistakes in your code. They are a natural part of programming, so don't get discouraged! If you typed <code>print("hello, world"</code> (forgetting the last parenthesis), the interpreter would show an error message. These messages are clues to help you fix your code.</p>
+                    <ul>
+                        <li>Bugs are a natural part of coding. These are mistakes, problems for you to solve! Don’t get discouraged! This is part of the process of becoming a great programmer.</li>
+                        <li>Imagine that in our <code>hello.py</code> program we accidentally typed <code>print("hello, world"</code>, forgetting the final <code>)</code> required by the <code>print</code> function. If you make this mistake, the interpreter will output an error in the terminal window!</li>
+                        <li>Error messages can often inform you of your mistakes and provide clues on how to fix them. However, there will be many times when the interpreter is not this helpful.</li>
+                    </ul>
+                </section>
+
+                <hr class="section-divider">
+                
+                <section id="improving-your-first-python-program" data-aos="fade-up">
+                    <h2>Improving Your First Python Program</h2>
+                    <p>We can personalize your first Python program.</p>
+                    <p>In our text editor in <code>hello.py</code> we can add another function. <code>input</code> is a function that takes a prompt as an argument. We can edit our code to say:</p>
+                    <pre><code class="language-python">input("What's your name? ")
+print("hello, world")</code></pre>
+                    <p>This edit alone, however, will not allow your program to output what your user inputs. For that, we will need to introduce you to variables.</p>
+                    
+                    <h3 id="variables">Variables</h3>
+                    <p>A <span class="tooltip" data-tooltip="A named container for storing data values.">variable</span> is just a container for a value within your own program.</p>
+                    <p>In your program, you can introduce your own variable in your program by editing it to read:</p>
+                    <pre><code class="language-python">name = input("What's your name? ")
+print("hello, world")</code></pre>
+                    <p>Notice that this equal <code>=</code> sign in the middle of <code>name = input("What's your name? ")</code> has a special role in programming. This equal sign literally assigns what is on the right to what is on the left. Therefore, the value returned by <code>input("What's your name? ")</code> is assigned to <code>name</code>.</p>
+                    <p>If you edit your code as follows, you will notice an unexpected result:</p>
+                    <pre><code class="language-python">name = input("What's your name? ")
+print("hello, name")</code></pre>
+                    <p>The program will return <code>hello, name</code> in the terminal window regardless of what the user types.</p>
+                    <p>Further editing our code, you could type:</p>
+                    <pre><code class="language-python">name = input("What's your name? ")
+print("hello,")
+print(name)</code></pre>
+                    <p>The result in the terminal window would be:</p>
+                    <pre><code class="language-bash">What's your name? David
+hello,
+David</code></pre>
+                    <p>We are getting closer to the result we might intend! You can learn more in Python’s documentation on <a href="https://docs.python.org/3/library/stdtypes.html" target="_blank">data types</a>.</p>
+                    
+                    <h3 id="comments">Comments</h3>
+                    <p>Comments are a way for programmers to track what they are doing in their programs and even inform others about their intentions for a block of code. In short, they are notes for yourself and others who will see your code!</p>
+                    <p>You can add comments to your program to be able to see what it is that your program is doing. You might edit your code as follows:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
+print("hello,")
+print(name)</code></pre>
+                    <p>Comments can also serve as a to-do list for you.</p>
+
+                    <h3 id="pseudocode">Pseudocode</h3>
+                    <p>Pseudocode is an important type of comment that becomes a special type of to-do list, especially when you don’t understand how to accomplish a coding task. For example, in your code, you might edit your code to say:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
+
+# Print hello
+print("hello,")
+
+# Print the name inputted
+print(name)</code></pre>
                 </section>
 
                 <hr class="section-divider">
 
-                <section id="improving-your-first-python-program" data-aos="fade-up">
-                    <h2>Improving Your First Python Program</h2>
-                    <p>We can make our program interactive using the <code>input</code> function, which takes a prompt as an argument and waits for the user to type something.</p>
-                    <pre><code class="language-python">input("What's your name? ")
-print("hello, world")</code></pre>
-                    <p>This alone doesn't use the input. For that, we need variables.</p>
-                    
-                    <h3>Variables</h3>
-                    <div class="callout info">
-                        <i class="fas fa-info-circle"></i>
-                        <p>A <strong>variable</strong> is a container for a value. The equals sign <code>=</code> is the <strong>assignment operator</strong>; it assigns the value on the right to the variable on the left.</p>
-                    </div>
-                    <pre><code class="language-python">name = input("What's your name? ")
-print("hello,", name)</code></pre>
-                    <p>Here, the text you type is stored in the <code>name</code> variable, which is then passed as a second argument to <code>print</code>. The output will be <code>hello, David</code> if you type "David".</p>
-                    
-                    <h3>Comments and Pseudocode</h3>
-                    <p>Comments, starting with <code>#</code>, are notes for humans that the interpreter ignores. They are crucial for explaining your code's intent.</p>
-                    <p><strong>Pseudocode</strong> is a special type of comment where you plan your program's logic in plain English before writing the actual code.</p>
-                    <pre><code class="language-python"># Pseudocode Plan:
-# 1. Ask the user for their name
-# 2. Print a greeting using that name
-
-# Implementation:
+                <section id="further-improving-your-program" data-aos="fade-up">
+                    <h2>Further Improving Your First Python Program</h2>
+                    <p>We can further edit our code as follows:</p>
+                    <pre><code class="language-python"># Ask the user for their name
 name = input("What's your name? ")
+
+# Print hello and the inputted name
+print("hello, " + name)</code></pre>
+                    <p>It turns out that some functions take many arguments. We can use a comma <code>,</code> to pass in multiple arguments by editing our code as follows:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
+
+# Print hello and the inputted name
 print("hello,", name)</code></pre>
+                    <p>The output in the terminal, if we typed "David" we would be <code>hello, David</code>. Success.</p>
                 </section>
                 
                 <hr class="section-divider">
 
                 <section id="strings-and-parameters" data-aos="fade-up">
                     <h2>Strings and Parameters</h2>
-                    <p>A string (<code>str</code>) is a sequence of text. The <code>print</code> function has optional parameters that change its behavior. By default, <code>print</code> uses <code>end='\n'</code>, which adds a newline character. We can override this:</p>
-                    <pre><code class="language-python">print("hello, ", end="")
-print("world")
-# Output: hello, world</code></pre>
+                    <p>A <span class="tooltip" data-tooltip="A sequence of characters, like 'hello'. Known as 'str' in Python.">string</span>, known as a <code>str</code> in Python, is a sequence of text.</p>
+                    <p>Rewinding a bit in our code back to the following, there was a visual side effect of having the result appear on multiple lines:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
+print("hello,")
+print(name)</code></pre>
+                    <p>Functions take arguments that influence their behavior. If we look at the documentation for <code>print</code> you’ll notice we can learn a lot about the arguments that the print function takes.</p>
+                    <p>Looking at this documentation, you’ll learn that the <code>print</code> function automatically includes the argument <code>end='\n'</code>. This <code>\n</code> indicates that the <code>print</code> function will automatically create a line break when run. The function takes an argument called <code>end</code>, and the default is to create a new line.</p>
+                    <p>However, we can technically provide an argument for <code>end</code> ourselves such that a new line is not created!</p>
+                    <p>We can modify our code as follows:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
+print("hello, ", end="")
+print(name)</code></pre>
+                    <p>By providing <code>end=""</code> we are overwriting the default value of <code>end</code> such that it never creates a new line after this first print statement. Providing the name as "David", the output in the terminal window will be <code>hello, David</code>.</p>
+                    <p>Parameters, therefore, are arguments that can be taken by a function. You can learn more in Python's documentation on <a href="https://docs.python.org/3/library/functions.html#print" target="_blank">print</a>.</p>
 
-                    <h3>Formatting Strings (f-strings)</h3>
-                    <p>The most elegant way to combine variables and text is with f-strings. Start the string with an <code>f</code> and place variables inside curly braces <code>{}</code>.</p>
-                    <pre><code class="language-python">name = "David"
-print(f"hello, {name}")
-# Output: hello, David</code></pre>
+                    <h3 id="a-small-problem-with-quotation-marks">A small problem with quotation marks</h3>
+                    <p>Notice how adding quotation marks as part of your string is challenging. <code>print("hello, "friend"")</code> will not work, and the interpreter will throw an error.</p>
+                    <p>Generally, there are two approaches to fixing this. First, you could simply change the quotes to single quotation marks.</p>
+                    <p>Another, more commonly used approach would be to write <code>print("hello, \"friend\"")</code>. The backslashes tell the interpreter that the following character should be treated as a quotation mark in the string and avoid an interpreter error.</p>
 
-                    <h3>More on Strings (Methods)</h3>
-                    <p>Strings come with built-in functions called methods. You can chain them together for powerful, one-line transformations.</p>
-                    <ul>
-                        <li><code>.strip()</code>: Removes leading/trailing whitespace.</li>
-                        <li><code>.title()</code>: Capitalizes the first letter of each word.</li>
-                    </ul>
-                    <pre><code class="language-python">name = input("What's your name? ").strip().title()
+                    <h3 id="formatting-strings">Formatting Strings</h3>
+                    <p>Probably the most elegant way to use strings would be as follows:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
 print(f"hello, {name}")</code></pre>
+                    <p>Notice the <code>f</code> in <code>f"hello, {name}"</code>. This <code>f</code> is a special indicator for Python to treat this string a special way, different than previous approaches we have illustrated in this lecture. Expect that you will be using this style of strings quite frequently in this course.</p>
+
+                    <h3 id="more-on-strings">More on Strings</h3>
+                    <p>You should never expect your user to cooperate as intended. Therefore, you will need to ensure that the input of your user is corrected or checked.</p>
+                    <p>It turns out that built into strings are methods that you can use. By utilizing the <code>strip</code> method on <code>name</code> (for example, <code>name.strip()</code>), you will remove any whitespace from the left and right of the user's input. You can modify your code to be:</p>
+                    <pre><code class="language-python"># Ask the user for their name
+name = input("What's your name? ")
+
+# Remove whitespace from the str
+name = name.strip()
+
+# Print the output
+print(f"hello, {name}")</code></pre>
+                    <p>Using the <code>title</code> method, it would title case the user’s name:</p>
+                     <pre><code class="language-python"># ... (previous code) ...
+# Capitalize the first letter of each word
+name = name.title()
+# ... (rest of a code) ...
+</code></pre>
+                    <p>By this point, you might be very tired of typing <code>python</code> repeatedly in the terminal window. You can use the up-arrow key on your keyboard to recall the most recent terminal commands you have entered.</p>
+                    <p>Notice that you can modify your code to be more efficient by chaining methods:</p>
+                    <pre><code class="language-python"># Ask the user for their name, remove whitespace and capitalize
+name = input("What's your name? ").strip().title()
+
+# Print the output
+print(f"hello, {name}")</code></pre>
+                    <p>You can learn more about strings in Python's documentation on <a href="https://docs.python.org/3/library/stdtypes.html#string-methods" target="_blank">str</a>.</p>
                 </section>
-                
+
                 <hr class="section-divider">
 
-                <section id="integers-and-floats" data-aos="fade-up">
-                    <h2>Integers and Floats</h2>
-                    <p>An integer (<code>int</code>) is a whole number. A float (<code>float</code>) is a number with a decimal. The <code>input()</code> function always returns a string, so you must convert it if you want to do math.</p>
-                    <div class="callout warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p><strong>Type Casting:</strong> Explicitly converting a value from one type to another, like <code>int()</code> or <code>float()</code>. Forgetting to cast numeric input is a common bug!</p>
-                    </div>
+                <section id="integers-or-int" data-aos="fade-up">
+                    <h2>Integers or int</h2>
+                    <p>In Python, an integer is referred to as an <code>int</code>. In the world of mathematics, we are familiar with <code>+,-,*,/</code> and <code>%</code> operators. That last operator <code>%</code> or modulo operator may not be very familiar to you.</p>
+                    <p>You don’t have to use the text editor window to run Python code. Down in your terminal, you can run <code>python</code> alone. You will be presented with <code>>>></code> in the terminal window. You can then run live, interactive code. You could type <code>1+1</code>, and it will run that calculation. This mode will not commonly be used during this course.</p>
+                    <p>Opening up VS Code again, we can type <code>code calculator.py</code> in the terminal. This will create a new file in which we will create our own calculator. First, we can declare a few variables.</p>
+                    <pre><code class="language-python">x = 1
+y = 2
+z = x + y
+print(z)</code></pre>
+                    <p>Naturally, when we run <code>python calculator.py</code> we get the result in the terminal window of 3. We can make this more interactive using the <code>input</code> function.</p>
+                    <pre><code class="language-python">x = input("What's x? ")
+y = input("What's y? ")
+z = x + y
+print(z)</code></pre>
+                    <p>Running this program, we discover that the output is incorrect as 12. Why might this be? Prior, we have seen how the <code>+</code> sign concatenates two strings. Because your input from your keyboard comes into the interpreter as text, it is treated as a string. We, therefore, need to convert this input from a string to an integer. We can do so as follows:</p>
+                    <pre><code class="language-python">x = input("What's x? ")
+y = input("What's y? ")
+z = int(x) + int(y)
+print(z)</code></pre>
+                    <p>The result is now correct. The use of <code>int(x)</code> is called <span class="tooltip" data-tooltip="Explicitly converting a value from one data type to another.">“casting,”</span> where a value is temporarily changed from one type of variable (in this case, a string) to another (here, an integer).</p>
+                    <p>We can further improve our program as follows:</p>
                     <pre><code class="language-python">x = int(input("What's x? "))
 y = int(input("What's y? "))
 print(x + y)</code></pre>
-
-                    <h3>Readability and Formatting</h3>
-                    <p>Code must be readable. Use comments and clear variable names. For formatting numbers, you can use f-strings:</p>
-                    <pre><code class="language-python">z = 1000000
-print(f"{z:,}")      # Output: 1,000,000
-
-pi = 3.14159265
-print(f"{pi:.2f}")  # Output: 3.14</code></pre>
+                    <p>This illustrates that you can run functions on functions. The inner function is run first, and then the outer one is run. First, the <code>input</code> function is run. Then, the <code>int</code> function. You can learn more in Python’s documentation of <a href="https://docs.python.org/3/library/functions.html#int" target="_blank">int</a>.</p>
                 </section>
                 
                 <hr class="section-divider">
 
-                <section id="def-functions" data-aos="fade-up">
-                    <h2>Defining Your Own Functions with `def`</h2>
-                    <p>Use the <code>def</code> keyword to create your own functions. This helps organize code into reusable blocks. A function can take parameters (inputs) and can have default values.</p>
-                    <pre><code class="language-python"># Define a function 'hello' with a parameter 'to' that has a default value
+                <section id="readability-and-floats" data-aos="fade-up">
+                    <h2>Readability and Floats</h2>
+                    <h3 id="readability-wins">Readability Wins</h3>
+                    <p>When deciding on your approach to a coding task, remember that one could make a reasonable argument for many approaches to the same problem.</p>
+                    <p>Regardless of what approach you take to a programming task, remember that your code must be readable. You should use comments to give yourself and others clues about what your code is doing. Further, you should create code in a way that is readable.</p>
+                    
+                    <h3 id="float-basics">Float Basics</h3>
+                    <p>A floating point value is a real number that has a decimal point in it, such as <code>0.52</code>. You can change your code to support floats as follows:</p>
+                    <pre><code class="language-python">x = float(input("What's x? "))
+y = float(input("What's y? "))
+print(x + y)</code></pre>
+                    <p>This change allows your user to enter 1.2 and 3.4 to present a total of 4.6. Let’s imagine, however, that you want to round the total to the nearest integer. Looking at the Python documentation for <code>round</code>, you’ll see that the available arguments are <code>round(number[, ndigits])</code>. Those square brackets indicate that something optional can be specified by the programmer. Therefore, you could do <code>round(n)</code> to round a digit to its nearest integer. Alternatively, you could code as follows:</p>
+                    <pre><code class="language-python"># Get the user's input
+x = float(input("What's x? "))
+y = float(input("What's y? "))
+
+# Create a rounded result
+z = round(x + y)
+
+# Print the result
+print(z)</code></pre>
+                    <p>The output will be rounded to the nearest integer. What if we wanted to format the output of long numbers? For example, rather than seeing <code>1000</code>, you may wish to see <code>1,000</code>. You could modify your code as follows:</p>
+                    <pre><code class="language-python"># Get user's input as integers
+x = int(input("What's x? "))
+y = int(input("What's y? "))
+
+# Print the formatted result
+print(f"{x + y:,}")</code></pre>
+                    <p>Though quite cryptic, that <code>print(f"{z:,}")</code> creates a scenario where the outputted z will include commas where the result could look like <code>1,000</code> or <code>2,500</code>.</p>
+                    
+                    <h3 id="more-on-floats">More on Floats</h3>
+                    <p>How can we round floating point values? First, modify your code as follows:</p>
+                    <pre><code class="language-python"># Get the user's input
+x = float(input("What's x? "))
+y = float(input("What's y? "))
+
+# Calculate the result
+z = x / y
+
+# Print the result
+print(z)</code></pre>
+                    <p>When inputting 1 as x and 3 as y, the result z is <code>0.3333333333333333</code>, seemingly going on to infinity as we might expect. Let’s imagine that we want to round this down. We could modify our code as follows:</p>
+                    <pre><code class="language-python"># Get the user's input
+x = float(input("What's x? "))
+y = float(input("What's y? "))
+
+# Calculate the result and round
+z = round(x / y, 2)
+
+# Print the result
+print(z)</code></pre>
+                    <p>As we might expect, this will round the result to the nearest two decimal points. We could also use an f-string to format the output as follows:</p>
+                    <pre><code class="language-python"># Get the user's input
+x = float(input("What's x? "))
+y = float(input("What's y? "))
+
+# Calculate the result
+z = x / y
+
+# Print the result
+print(f"{z:.2f}")</code></pre>
+                    <p>This cryptic f-string code displays the same as our prior rounding strategy. You can learn more in Python’s documentation of <a href="https://docs.python.org/3/library/functions.html#float" target="_blank">float</a>.</p>
+                </section>
+                
+                <hr class="section-divider">
+
+                <section id="def" data-aos="fade-up">
+                    <h2>Def</h2>
+                    <p>Wouldn’t it be nice to create our own functions? Let’s bring back our final code of <code>hello.py</code> by typing <code>code hello.py</code> into the terminal window. Your starting code should look as follows:</p>
+                    <pre><code class="language-python"># Ask the user for their name, remove whitespace from the str and capitalize the first letter of each word
+name = input("What's your name? ").strip().title()
+
+# Print the output
+print(f"hello, {name}")</code></pre>
+                    <p>We can better our code to create our own special function that says “hello” for us! Erasing all our code in our text editor, let’s start from scratch:</p>
+                    <pre><code class="language-python">name = input("What's your name? ")
+hello()
+print(name)</code></pre>
+                    <p>Attempting to run this code, your interpreter will throw an error. After all, there is no defined function for <code>hello</code>. We can create our own function called <code>hello</code> as follows:</p>
+                    <pre><code class="language-python">def hello():
+    print("hello")
+
+name = input("What's your name? ")
+hello()
+print(name)</code></pre>
+                    <p>Notice that everything under <code>def hello()</code> is indented. Python is an indented language. It uses indentation to understand what is part of the above function. Therefore, everything in the <code>hello</code> function must be indented. When something is not indented, it treats it as if it is not inside the <code>hello</code> function. Running <code>python hello.py</code> in the terminal window, you’ll see that your output is not exactly as you may want.</p>
+                    <p>We can further improve our code:</p>
+                    <pre><code class="language-python"># Create our own function
+def hello(to):
+    print("hello,", to)
+
+# Output using our own function
+name = input("What's your name? ")
+hello(name)</code></pre>
+                    <p>Here, in the first lines, you are creating your <code>hello</code> function. This time, however, you are telling the interpreter that this function takes a single parameter: a variable called <code>to</code>. Therefore, when you call <code>hello(name)</code> the computer passes <code>name</code> into the <code>hello</code> function as <code>to</code>. This is how we pass values into functions. Very useful! Running <code>python hello.py</code> in the terminal window, you’ll see that the output is much closer to our ideal presented earlier in this lecture.</p>
+                    <p>We can change our code to add a default value to <code>hello</code>:</p>
+                    <pre><code class="language-python"># Create our own function
 def hello(to="world"):
-    print(f"hello, {to}")
+    print("hello,", to)
 
-# It's conventional to have a 'main' function that runs your program
-def main():
-    name = input("What's your name? ").strip().title()
-    hello(name)  # Calls 'hello' with the user's name
-    hello()      # Calls 'hello' using the default value "world"
+# Output using our own function
+name = input("What's your name? ")
+hello(name)
 
-# This line actually runs the main function
+# Output without passing the expected arguments
+hello()</code></pre>
+                    <p>Test out your code yourself. Notice how the first <code>hello</code> will behave as you might expect, and the second <code>hello</code>, which is not passed a value, will, by default, output <code>hello, world</code>.</p>
+                    <p>We don’t have to have our function at the start of our program. We can move it down, but we need to tell the interpreter that we have a <code>main</code> function and a separate <code>hello</code> function.</p>
+                     <p>This alone, however, will create an error of sorts. If we run <code>python hello.py</code>, nothing happens! The reason for this is that nothing in this code is actually calling the <code>main</code> function and bringing our program to life.</p>
+                    <p>The following very small modification will call the <code>main</code> function and restore our program to working order:</p>
+                    <pre><code class="language-python">def main():
+    # Output using our own function
+    name = input("What's your name? ")
+    hello(name)
+
+    # Output without passing the expected arguments
+    hello()
+
+# Create our own function
+def hello(to="world"):
+    print("hello,", to)
+
 main()</code></pre>
                 </section>
-
+                
                 <hr class="section-divider">
 
                 <section id="returning-values" data-aos="fade-up">
                     <h2>Returning Values</h2>
-                    <p>Functions can perform an action (like printing) or `return` a value to wherever the function was called. This is essential for building complex programs where results from one function are used as inputs for another.</p>
+                    <p>You can imagine many scenarios where you don’t just want a function to perform an action but also to return a value back to the main function. For example, rather than simply printing the calculation of <code>x + y</code>, you may want a function to return the value of this calculation back to another part of your program. This “passing back” of a value we call a return value.</p>
+                    <p>Returning to our <code>calculator.py</code> code by typing <code>code calculator.py</code>. Erase all code there. Rework the code as follows:</p>
                      <pre><code class="language-python">def main():
     x = int(input("What's x? "))
-    # The value returned by square(x) is printed
     print("x squared is", square(x))
 
 def square(n):
-    # This function doesn't print; it sends a value back
     return n * n
 
 main()</code></pre>
+                    <p>Effectively, <code>x</code> is passed to <code>square</code>. Then, the calculation of <code>x * x</code> is returned back to the main function.</p>
                 </section>
 
                 <hr class="section-divider">
 
                 <section id="summing-up" data-aos="fade-up">
                     <h2>Summing Up</h2>
-                    <p>In this lesson, you've learned about the core concepts that form the foundation of programming in Python:</p>
+                    <p>Through the work of this single lecture, you have learned abilities that you will use countless times in your own programs. You have learned about:</p>
                     <ul class="summary-list">
-                        <li><i class="fas fa-check"></i> Functions, Bugs, and Variables</li>
-                        <li><i class="fas fa-check"></i> Comments and Pseudocode</li>
-                        <li><i class="fas fa-check"></i> Strings, Parameters, and Formatting</li>
-                        <li><i class="fas fa-check"></i> Integers, Floats, and Readability</li>
-                        <li><i class="fas fa-check"></i> Defining your own functions with `def`</li>
-                        <li><i class="fas fa-check"></i> Returning values from functions</li>
+                        <li>Creating your first programs in Python;</li>
+                        <li>Functions;</li>
+                        <li>Bugs;</li>
+                        <li>Variables;</li>
+                        <li>Comments;</li>
+                        <li>Pseudocode;</li>
+                        <li>Strings;</li>
+                        <li>Parameters;</li>
+                        <li>Formatted Strings;</li>
+                        <li>Integers;</li>
+                        <li>Principles of readability;</li>
+                        <li>Floats;</li>
+                        <li>Creating your own functions; and</li>
+                        <li>Return values.</li>
                     </ul>
                 </section>
             </main>

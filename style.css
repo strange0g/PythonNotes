@@ -8,10 +8,11 @@
     --accent-color: #58a6ff;
     --accent-hover: #79c0ff;
     --code-bg: #010409;
+    --console-bg: #1a1a1a;
+    --console-border: #444;
     --shadow-color: rgba(0, 0, 0, 0.4);
-    --callout-info-bg: rgba(88, 166, 255, 0.1);
-    --callout-warning-bg: rgba(255, 179, 67, 0.1);
-    --callout-warning-border: #d29922;
+    --tooltip-bg: #2d333b;
+    --active-toc-bg: #1f2b3c;
     --font-primary: 'Poppins', sans-serif;
     --font-code: 'Fira Code', monospace;
 }
@@ -34,18 +35,12 @@ body {
 #homepage .header p { font-size: 1.25rem; color: var(--secondary-text); max-width: 600px; margin: auto; }
 .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
 .note-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem 2rem;
-    text-decoration: none;
-    color: var(--primary-text);
+    background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
+    padding: 1.5rem 2rem; text-decoration: none; color: var(--primary-text);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .note-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 25px var(--shadow-color);
-    border-color: var(--accent-color);
+    transform: translateY(-8px); box-shadow: 0 12px 25px var(--shadow-color); border-color: var(--accent-color);
 }
 .note-card .card-icon { font-size: 1.5rem; color: var(--accent-color); margin-bottom: 1rem; display: block; }
 .note-card h3 { font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--primary-text); }
@@ -57,34 +52,81 @@ body {
 /* --- Notes Page Styles --- */
 #notes-page-content { display: flex; gap: 3rem; }
 #toc { position: sticky; top: 2rem; width: 280px; flex-shrink: 0; align-self: flex-start; }
-#toc h3 { font-size: 1.2rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); color: var(--primary-text); }
-#toc h3 .fas { margin-right: 10px; color: var(--accent-color); }
-#toc nav ul { list-style: none; }
+#toc h3 { 
+    font-size: 1.3rem; 
+    font-weight: 600;
+    margin-bottom: 1rem; 
+    padding-bottom: 0.75rem; 
+    border-bottom: 1px solid var(--border-color); 
+    color: var(--primary-text); 
+    display: flex; 
+    align-items: center; 
+}
+#toc h3 .fas { 
+    margin-right: 12px; 
+    color: var(--primary-text); 
+}
+
+/* --- TOC Styling to match the screenshot --- */
+#toc nav ul { 
+    list-style: none; 
+    position: relative; 
+}
+#toc nav ul::before { /* The main vertical line */
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    bottom: 10px;
+    width: 1px;
+    background-color: var(--border-color);
+}
 #toc nav li a {
-    display: block; padding: 0.6rem 0.8rem; text-decoration: none; color: var(--secondary-text); border-left: 3px solid var(--border-color); transition: all 0.2s ease;
-    font-size: 0.95rem;
+    display: block;
+    padding: 0.6rem 0.6rem 0.6rem 24px;
+    text-decoration: none;
+    color: var(--secondary-text);
+    border-radius: 4px;
+    margin: 0.2rem 0;
+    position: relative;
+    border-left: 2px solid transparent; /* Placeholder for the active state */
+    transition: color 0.2s ease, background-color 0.2s ease, border-left-color 0.2s ease;
 }
-#toc nav li a:hover { color: var(--primary-text); border-left-color: var(--accent-hover); }
+#toc nav li a.sub-item {
+    font-size: 0.9rem;
+    padding-left: 38px; /* Indent sub-items more */
+    color: #a0a8b1;
+}
+#toc nav li a:hover {
+    color: var(--primary-text);
+    background-color: var(--card-bg);
+}
 #toc nav li a.active {
-    color: var(--accent-color); border-left-color: var(--accent-color); font-weight: 600; background-color: var(--callout-info-bg); transform: translateX(5px);
+    color: var(--accent-hover);
+    font-weight: 500;
+    background-color: var(--active-toc-bg);
+    border-left-color: var(--accent-color);
 }
+
+
+/* --- Main Content --- */
 #main-content { flex-grow: 1; min-width: 0; }
 #main-content > section { margin-bottom: 2rem; padding-top: 2rem; }
 #main-content h1 { font-size: 3rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color); }
 #main-content h2 { font-size: 2.2rem; margin-top: 1rem; margin-bottom: 1.5rem; color: var(--accent-color); }
-#main-content h3 { font-size: 1.6rem; margin-top: 2.5rem; margin-bottom: 1rem; color: var(--accent-hover); }
+#main-content h3 { font-size: 1.6rem; margin-top: 2.5rem; margin-bottom: 1.2rem; color: var(--accent-hover); border-left: 3px solid var(--accent-color); padding-left: 1rem; }
 #main-content p, #main-content ul { margin-bottom: 1.5rem; }
-#main-content ul { list-style: none; padding-left: 0; }
-#main-content ul li { padding-left: 1.5em; position: relative; }
+#main-content ul { list-style: none; padding-left: 1rem; }
 #main-content ul li::before {
-    content: "\2022"; color: var(--accent-color); font-weight: bold; display: inline-block; width: 1.5em; margin-left: -1.5em;
+    content: "\25A0"; /* Square bullet */ color: var(--accent-color); font-weight: bold; display: inline-block; width: 1.5em; margin-left: -1.5em;
 }
-#main-content .summary-list i { margin-right: 10px; color: var(--accent-color); }
+#main-content .summary-list li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; }
 #main-content a { color: var(--accent-color); text-decoration: none; border-bottom: 1px dashed var(--accent-color); transition: color 0.2s ease; }
 #main-content a:hover { color: var(--accent-hover); }
 
-/* Code Blocks & Callouts */
+/* Code Blocks & Tooltips */
 #main-content pre { position: relative; margin: 2rem 0; }
+#main-content pre code.language-bash { background-color: var(--console-bg); border: 1px solid var(--console-border); color: #eee; }
 #main-content code { font-family: var(--font-code); }
 #main-content p > code, #main-content li > code { background-color: var(--card-bg); padding: 0.2em 0.5em; border-radius: 4px; font-size: 0.9em; border: 1px solid var(--border-color); }
 .copy-code-btn {
@@ -93,14 +135,14 @@ body {
 }
 #main-content pre:hover .copy-code-btn { opacity: 1; visibility: visible; }
 .copy-code-btn:hover { color: var(--primary-text); background-color: #3a4049; }
-.callout {
-    padding: 1.5rem; margin: 2rem 0; border-radius: 8px; border-left: 5px solid var(--accent-color);
-    background-color: var(--callout-info-bg); display: flex; align-items: flex-start; gap: 1rem;
+.tooltip { position: relative; cursor: help; border-bottom: 1px dotted var(--accent-color); }
+.tooltip:after {
+    content: attr(data-tooltip); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+    background: var(--tooltip-bg); color: var(--primary-text); padding: 8px 12px; border-radius: 6px;
+    font-size: 0.9em; width: max-content; max-width: 250px; text-align: center; z-index: 10;
+    opacity: 0; visibility: hidden; transition: opacity 0.3s ease; pointer-events: none;
 }
-.callout.warning { border-color: var(--callout-warning-border); background-color: var(--callout-warning-bg); }
-.callout i { font-size: 1.5rem; color: var(--accent-color); margin-top: 0.2rem; }
-.callout.warning i { color: var(--callout-warning-border); }
-.callout p { margin: 0; }
+.tooltip:hover:after { opacity: 1; visibility: visible; }
 .section-divider { border: 0; height: 1px; background: var(--border-color); margin: 3rem 0; }
 
 /* Footer & Utility */

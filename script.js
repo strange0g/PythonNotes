@@ -1,10 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // --- Initialize External Libraries ---
-    AOS.init({
-        duration: 600,
-        once: true,
-        easing: 'ease-in-out',
-    });
+    AOS.init({ duration: 600, once: true, easing: 'ease-in-out' });
     hljs.highlightAll();
 
     // --- Page Navigation Logic ---
@@ -25,43 +21,21 @@ document.addEventListener('DOMContentLoaded', function() {
         homepage.classList.add('hidden');
         notesPage.classList.remove('hidden');
         window.location.hash = 'notes';
-        const mainTitle = document.getElementById('main-title').textContent;
-        document.title = `Note: ${mainTitle}`;
+        document.title = `Note: ${document.getElementById('main-title').textContent}`;
         window.scrollTo(0, 0);
     }
 
-    if (card1) {
-        card1.addEventListener('click', (e) => {
-            e.preventDefault();
-            showNotesPage();
-        });
-    }
-
-    if (backToHomeBtn) {
-        backToHomeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            showHomepage();
-        });
-    }
-
-    if (window.location.hash === '#notes') {
-        showNotesPage();
-    } else {
-        showHomepage();
-    }
+    if (card1) card1.addEventListener('click', (e) => { e.preventDefault(); showNotesPage(); });
+    if (backToHomeBtn) backToHomeBtn.addEventListener('click', (e) => { e.preventDefault(); showHomepage(); });
+    if (window.location.hash === '#notes') showNotesPage();
+    else showHomepage();
 
     // --- Scroll to Top Button ---
     const scrollToTopBtn = document.getElementById('scroll-to-top');
     window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            scrollToTopBtn.classList.add('visible');
-        } else {
-            scrollToTopBtn.classList.remove('visible');
-        }
+        scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
     });
-    scrollToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
     // --- Code Block "Copy" Button ---
     document.querySelectorAll('#main-content pre').forEach(block => {
@@ -80,57 +54,62 @@ document.addEventListener('DOMContentLoaded', function() {
                     copyBtn.innerHTML = '<i class="far fa-copy"></i>';
                     copyBtn.setAttribute('title', 'Copy code');
                 }, 2000);
-            }).catch(err => console.error('Failed to copy: ', err));
+            });
         });
     });
 
-    // --- TOC Generation and Active State on Scroll ---
+    // --- Hierarchical TOC Logic ---
     const tocList = document.getElementById('toc-list');
-    const sections = document.querySelectorAll('#main-content > section');
-    const tocLinks = [];
+    const mainContent = document.getElementById('main-content');
 
-    if (tocList) {
-        sections.forEach(section => {
-            const titleEl = section.querySelector('h2');
-            if (!titleEl) return;
-            const id = section.id;
-            const title = titleEl.textContent;
-            
+    if (tocList && mainContent) {
+        const headings = Array.from(mainContent.querySelectorAll('h2[id], h3[id]'));
+        const tocLinks = [];
+
+        // Clear existing TOC and rebuild it
+        tocList.innerHTML = '';
+        headings.forEach(heading => {
             const li = document.createElement('li');
             const a = document.createElement('a');
-            a.href = `#${id}`;
-            a.textContent = title;
+            a.href = `#${heading.id}`;
+            a.textContent = heading.textContent;
+            a.dataset.targetId = heading.id;
+            
+            if (heading.tagName === 'H3') {
+                a.classList.add('sub-item');
+            }
+
             li.appendChild(a);
             tocList.appendChild(li);
             tocLinks.push(a);
         });
+        
+        if (headings.length === 0) return;
+
+        const headingStates = new Map();
 
         const observer = new IntersectionObserver(entries => {
-            let visibleSections = [];
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    visibleSections.push(entry.target);
+                headingStates.set(entry.target, entry.isIntersecting);
+            });
+
+            let activeHeading = null;
+            
+            headings.forEach(heading => {
+                if (headingStates.get(heading)) {
+                    activeHeading = heading;
                 }
             });
 
-            if (visibleSections.length > 0) {
-                // Find the topmost visible section
-                const topSection = visibleSections.reduce((prev, current) => {
-                    return prev.getBoundingClientRect().top < current.getBoundingClientRect().top ? prev : current;
-                });
+            tocLinks.forEach(link => {
+                link.classList.toggle('active', activeHeading && link.dataset.targetId === activeHeading.id);
+            });
 
-                const id = topSection.getAttribute('id');
-                tocLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${id}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        }, { rootMargin: '0px 0px -50% 0px', threshold: 0.1 });
-
-        sections.forEach(section => {
-            observer.observe(section);
+        }, { 
+            rootMargin: '0px 0px -65% 0px',
+            threshold: 0 
         });
+
+        headings.forEach(heading => observer.observe(heading));
     }
 });
