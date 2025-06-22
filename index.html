@@ -58,8 +58,28 @@
             <main id="main-content"></main>
         </div>
     </div>
-    
+
+    <!-- ================== UTILITY & CHAT ELEMENTS ================== -->
     <button id="scroll-to-top" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+
+    <button id="ai-chat-toggle" title="Ask AI Assistant">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <div id="chat-modal" class="hidden">
+        <div class="chat-header">
+            <h3>AI Notes Assistant</h3>
+            <button id="chat-close-btn" title="Close Chat">×</button>
+        </div>
+        <div class="chat-history" id="chat-history-container">
+            <!-- Messages are added dynamically by JavaScript -->
+        </div>
+        <form class="chat-input-form" id="chat-form">
+            <input type="text" id="chat-input" placeholder="Ask about functions..." autocomplete="off" required>
+            <button type="submit" title="Send Message"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+    
     <footer id="footer">Made with <i class="fas fa-heart"></i> by Raied</footer>
 
     <!-- External Scripts (with defer) -->
